@@ -1,0 +1,60 @@
+---
+
+- name: Grab f5 facts
+  hosts: xx.xx.xxx.xx
+  gather_facts: false
+  connection: local
+  collections:
+    - f5networks.f5_modules
+  vars:
+    Make: F5
+    
+  tasks:
+    - name: Collect BIG IP facts
+      bigip_device_info:
+        gather_subset:
+          - system-info
+        provider:
+          server: xx.xx.xx.xx
+          transport: rest
+          user: admin
+          password: o2-wifi
+          server_port: 443
+          timeout: 10
+          validate_certs: false
+      register: Result
+
+    - debug:
+        var: Result
+    - name: DISPLAY COMPLETE BIG IP HOSTNAME
+      debug:
+        var: inventory_hostname
+    - name: DISPLAY BIG IP MAKE
+      debug:
+        var: Make
+    - name: DISPLAY COMPLETE BIG IP MODEL
+      debug:
+        var: Result.ansible_facts.ansible_net_system_info.marketing_name
+
+    - name: DISPLAY ONLY THE SOFTWARE VERSION
+      debug:
+        var: Result.ansible_facts.ansible_net_system_info.product_version
+
+    - name: Write the output var to a file
+      copy:
+        content: "{{ Result }}"
+        dest: "/home/xxxx/xxxx/result1"
+
+    - name: Write the harware bit of the var to a file
+      copy:
+        content: "{{ Result.ansible_facts.ansible_net_system_info.base_mac_address }}"
+        dest: "/xxx/xxxx/xxx/result2"
+    - name: Create file
+      template:
+       src: test.j2
+       dest: "/xxx/xxx/{{ inventory_hostname }}-details"
+       mode: 0744
+      connection: local
+      ignore_errors: yes
+
+   
