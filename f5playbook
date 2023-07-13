@@ -18,7 +18,7 @@
           server: xx.xx.xx.xx
           transport: rest
           user: admin
-          password: o2-wifi
+          password: xxxx
           server_port: 443
           timeout: 10
           validate_certs: false
